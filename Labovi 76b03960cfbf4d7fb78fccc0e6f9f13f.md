@@ -336,3 +336,18 @@ if __name__ == "__main__":
 
 All of the functions that we tested can be found in TESTS. We see how performance changes when we have more iterations, e.g. Linux crypt function.
 We also used Argon2 function which could be memory hard or time hard function. We saw spikes  in performance of memory and CPU depending on howe we used Argon2.
+
+# **Online and Offline Password Guessing Attacks**
+
+First we needed to connect to our docker container using SSH. When we needed to enter password we figured out we don’t know it and we need to find it. Password is only small alphabet letters and 4 to 6 chars long. So that means there is 26^4 + 26^5 + 26^6 combinations. We installed hydra used this command to guess the password:
+
+```jsx
+hydra -l cagalj_mario -x 4:6:a 10.0.15.1 -V -t 1 ssh
+```
+
+As the key space is too big, we needed dictionary to make it easier. We downloaded dictionary and tried again, in a few minutes I got my password. It was *whertn.*
+
+After that I saved some other’s user (Freddie Mercury) password hash that I got from shadow file and proceeded with offline attack to guess his password. Again, key space was too big so we downloaded another dictionary and used hashcat:
+`hashcat --force -m 1800 -a 0 hash.txt dictionary/g1/dictionary_offline.txt --status --status-timer 10`
+
+In a few minutes I got his password too: *thento*. I tried to connect to docker container via SSH as Freddie Mercury and used that password, it was correct and we successfuly got both passwords, using online and offline attack.
